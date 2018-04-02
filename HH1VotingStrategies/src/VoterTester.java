@@ -16,23 +16,26 @@ public class VoterTester {
 		}
 		try {
 			String st;
-			ArrayList<String> candidates=new ArrayList<String>();
+			ArrayList<Candidate> candidates=new ArrayList<Candidate>();
 			while ((st = br.readLine()) != null)
 			{
-				candidates.add(st);
+				candidates.add(new Candidate(st));
 			}
-			String[] candidatesArray= candidates.toArray(new String[candidates.size()]);
-			/*
+			Candidate[] candidatesArray= candidates.toArray(new Candidate[candidates.size()]);
+			
 			for(int i=0; i<candidatesArray.length; i++)
 			{
-				System.out.println("candidates: "+candidatesArray[i]);
+				System.out.println("candidates: "+candidatesArray[i].toString());
 			}
-			*/
+			
 			voter.setCandidates(candidatesArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		File voterFile = new File("VotingShort1.csv");
+		
+		
+		
+		File voterFile = new File("Voting.csv");
 		try {
 			br = new BufferedReader(new FileReader(voterFile));
 		} catch (FileNotFoundException e) {
@@ -40,27 +43,32 @@ public class VoterTester {
 		}
 		try {
 			String st;
-			ArrayList<String[]> votes = new ArrayList<String[]>();
-			String[] vote = new String[4];
 			while ((st = br.readLine()) != null)
 			{
-				vote=st.split(",");
-				votes.add(vote);
+				String[] votes=st.split(",");
+				for(int i=1; i<votes.length; i++)
+				{
+					for(int j=0; j<voter.getCandidates().length; j++)
+					{
+						if(votes[i].equals(voter.getCandidates()[j].getName()))
+						{
+							voter.getCandidates()[j].add(i-1);
+						}
+					}
+				}
 			}
-			String[][] votesArray = votes.toArray(new String[votes.size()][4]);
-			/*
-			for(int i=0; i<votesArray.length; i++)
+			
+			for(int i=0; i<voter.getCandidates().length; i++)
 			{
-				System.out.println("voter: "+votesArray[i][0]+" 1: "+votesArray[i][1]+" 2: "+votesArray[i][2]+" 3: "+votesArray[i][3]);
+				System.out.println(voter.getCandidates()[i].getName()+" | first: "+voter.getCandidates()[i].getVotes()[0]+" | second: "+voter.getCandidates()[i].getVotes()[1]+" | third: "+voter.getCandidates()[i].getVotes()[2]);
 			}
-			*/
-			voter.setVotes(votesArray);
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		System.out.println(voter.getWinner());
+		System.out.println("result: "+voter.getWinner());
 		
 	}
 

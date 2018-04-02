@@ -4,24 +4,13 @@ public class WinnerTakesAllStrategy implements TabulationStrategy {
 	{
 		System.out.println("winner takes all strategy");
 	}
-	public String get(String[] candidates, String[][] votes)
+	public Candidate get(Candidate[] candidates)
 	{
-		int[] countPerIndex=new int[candidates.length];
-		for(int i=0; i<votes.length; i++)
-		{
-			for(int j=0; j<candidates.length; j++)
-			{
-				if(votes[i][1]==candidates[j])
-				{
-					countPerIndex[j]++;
-					break;
-				}
-			}
-		}
 		int maxIndex=0;
-		for(int i=0; i<countPerIndex.length; i++)
+		for(int i=0; i<candidates.length; i++)
 		{
-			if(countPerIndex[i]>countPerIndex[maxIndex])
+			int points = candidates[i].getPoints(Voter.Type.WINNER);
+			if(points>candidates[maxIndex].getPoints(Voter.Type.WINNER))
 			{
 				maxIndex=i;
 			}

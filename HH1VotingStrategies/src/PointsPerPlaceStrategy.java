@@ -4,8 +4,17 @@ public class PointsPerPlaceStrategy implements TabulationStrategy{
 	{
 		System.out.println("points per place strategy");
 	}
-	public String get(String[] candidates, String[][] votes )
+	public Candidate get(Candidate[] candidates)
 	{
-		return null;
+		int maxIndex=0;
+		for(int i=0; i<candidates.length; i++)
+		{
+			int points = candidates[i].getPoints(Voter.Type.PLACE);
+			if(points>candidates[maxIndex].getPoints(Voter.Type.PLACE))
+			{
+				maxIndex=i;
+			}
+		}
+		return candidates[maxIndex];
 	}
 }
