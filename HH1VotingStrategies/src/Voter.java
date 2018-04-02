@@ -4,31 +4,21 @@
  *
  */
 public abstract class Voter {
-	private TabulationStrategy tabulationStrategy;
 	private Candidate[] candidates;
-	
-	/**
-	 * Sets the counting strategy for this TabulationMethod
-	 * @param tabulationStrategy
-	 */
-	public void setTabulationStrategy(TabulationStrategy tabulationStrategy)
-	{
-		this.tabulationStrategy=tabulationStrategy;
-	}
-
-	/**
-	 * Gets the tabulation according to the strategy chosen
-	 * @return returns the tabulation as int
-	 */
-	public Candidate getWinner()
-	{
-		return tabulationStrategy.get(candidates);
-	}
+	private Type strategyType;
 	public static enum Type
 	{
-		WINNER,APPROVAL,PLACE
+		WINNER,APPROVAL,PLACE,LOSER
 	}
-	
+	protected void setStrategyType(Type strategyType)
+	{
+		this.strategyType=strategyType;
+	}
+
+	public Type getStrategyType()
+	{
+		return this.strategyType;
+	}
 	/**
 	 * sets the candidates string
 	 * @param The candidates as a string array
@@ -37,9 +27,29 @@ public abstract class Voter {
 	{
 		this.candidates=candidates;
 	}
-	
+
 	public Candidate[] getCandidates()
 	{
 		return candidates;
 	}
+	
+	/**
+	 * Gets the tabulation according to the strategy chosen
+	 * @return returns the tabulation as int
+	 */
+	public Candidate getWinner()
+	{		
+		int maxIndex=0;
+		for(int i=0; i<candidates.length; i++)
+		{
+			int points = getPoints(candidates[i]);
+			if(points>getPoints(candidates[maxIndex]))
+			{
+				maxIndex=i;
+			}
+		}
+		return candidates[maxIndex];
+	}
+	
+	protected abstract int getPoints(Candidate candidate);
 }

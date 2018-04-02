@@ -14,6 +14,10 @@ public class VoterFactory {
 		{
 			return new PointsPerPlaceVoter();
 		}
+		else if(type==Voter.Type.LOSER)
+		{
+			return new PointsPerPlaceVoter();
+		}
 		return null;
 	}
 }

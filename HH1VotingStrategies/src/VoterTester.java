@@ -8,70 +8,49 @@ public class VoterTester {
 		Voter voter = voterFactory.makeVoter(type);
 
 		File candidatesFile = new File("candidates.txt");
+		File voterFile = new File("Voting.csv");
+
+		ArrayList<Candidate> candidates=new ArrayList<Candidate>();
 		BufferedReader br=null;
+		
 		try {
 			br = new BufferedReader(new FileReader(candidatesFile));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			String st;
-			ArrayList<Candidate> candidates=new ArrayList<Candidate>();
-			while ((st = br.readLine()) != null)
-			{
-				candidates.add(new Candidate(st));
+			String candidateString;
+			while ((candidateString = br.readLine()) != null){
+				candidates.add(new Candidate(candidateString));
 			}
-			Candidate[] candidatesArray= candidates.toArray(new Candidate[candidates.size()]);
-			
-			for(int i=0; i<candidatesArray.length; i++)
-			{
-				System.out.println("candidates: "+candidatesArray[i].toString());
-			}
-			
-			voter.setCandidates(candidatesArray);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-		File voterFile = new File("Voting.csv");
-		try {
+
 			br = new BufferedReader(new FileReader(voterFile));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			String st;
-			while ((st = br.readLine()) != null)
-			{
-				String[] votes=st.split(",");
-				for(int i=1; i<votes.length; i++)
-				{
-					for(int j=0; j<voter.getCandidates().length; j++)
-					{
-						if(votes[i].equals(voter.getCandidates()[j].getName()))
-						{
-							voter.getCandidates()[j].add(i-1);
+			String voteString;
+			while ((voteString = br.readLine()) != null){
+				String[] votes=voteString.split(",");
+				for(int i=1; i<votes.length; i++){
+					for(int j=0; j<candidates.size(); j++){
+						if(votes[i].equals(candidates.get(j).getName())){
+							candidates.get(j).addVote(i-1);
 						}
 					}
 				}
 			}
 			
-			for(int i=0; i<voter.getCandidates().length; i++)
-			{
-				System.out.println(voter.getCandidates()[i].getName()+" | first: "+voter.getCandidates()[i].getVotes()[0]+" | second: "+voter.getCandidates()[i].getVotes()[1]+" | third: "+voter.getCandidates()[i].getVotes()[2]);
-			}
+			Candidate[] candidatesArray= candidates.toArray(new Candidate[candidates.size()]);
+			voter.setCandidates(candidatesArray);
 			
+	
+			for(int i=0; i<candidates.size(); i++)
+			{
+				System.out.println(candidates.get(i).getName()+" | first: "+candidates.get(i).getVotes()[0]+" | second: "+candidates.get(i).getVotes()[1]+" | third: "+candidates.get(i).getVotes()[2]);
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println("result: "+voter.getWinner());
-		
+
+
+		System.out.println("result for strategy type "+voter.getStrategyType()+": "+voter.getWinner());
+
 	}
 
-	
+
 }
 

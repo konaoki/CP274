@@ -1,0 +1,13 @@
+/ApprovalRatingStrategy.class
+/ApprovalRatingVoter.class
+/Candidate.class
+/PointsPerPlaceStrategy.class
+/PointsPerPlaceVoter.class
+/TabulationStrategy.class
+/Voter$Type.class
+/Voter.class
+/VoterFactory.class
+/VoterTester.class
+/WinnerTakesAllStrategy.class
+/WinnerTakesAllVoter.class
+/LoserTakesAllVoter.class
