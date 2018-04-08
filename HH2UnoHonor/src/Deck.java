@@ -111,7 +111,7 @@ public class Deck {
 	 * Draws a card from the top of the deck. Assumes the deck has been shuffled!
 	 * @return - the card that has been drawn
 	 */
-	public UnoCard draw()
+	public UnoCard pop()
 	{
 		if (deck.size() > 0)
 		{
@@ -124,5 +124,15 @@ public class Deck {
 			return null;
 		}
 
+	}
+	
+	public void reset(DiscardPile discards)
+	{
+		UnoCard topCard = discards.pop();
+		ArrayList<UnoCard> ourDiscards = discards.getDiscards();
+		returnCards(ourDiscards);
+		shuffle();
+		discards = new DiscardPile();
+		discards.addCard(topCard);
 	}
 }

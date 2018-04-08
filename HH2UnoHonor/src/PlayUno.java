@@ -23,8 +23,8 @@ public class PlayUno {
 
 
 	private Deck deck;
-	private Player human = new Player("Human");
-	private Player computer = new Player("Computer");
+	private Player human = new HumanPlayer("Human");
+	private Player computer = new RandomComputer("Computer");
 	private DiscardPile discards = new DiscardPile();
 	private UnoCard starter;
 
@@ -39,44 +39,7 @@ public class PlayUno {
 		System.out.println(winner + " has won!");
 	}
 
-	/**
-	 * Our main menu for the player options. 
-	 * @return the valid menu choice
-	 */
-	private int playerMenu()
-	{
-		boolean valid = false;
-		Scanner in = new Scanner(System.in);
-		int selection = 1;
-		while (!valid)
-		{
-			System.out.println("\nChoose the player option: ");
-			System.out.println("1: Continue Play");
-			System.out.println("2: Undo the last move");
-			System.out.println("3: Change the opponent's strategy");
-			System.out.print("> ");
-			try {
-				selection = in.nextInt();
-
-				in.nextLine();
-				if ((selection > 0) && (selection <= 3))
-				{
-					valid = true;
-				}
-			}
-			//this will catch the mismatch and prevent the error
-			catch(InputMismatchException ex)
-			{
-				//still need to gobble up the end of line
-				in.nextLine();
-			}
-			if (!valid)
-			{
-				System.out.println("Invalid entry -- enter a number between 1 and 3");
-			}
-		}
-		return selection;
-	}
+	
 
 	private String determineColor(Player currentPlayer)
 	{
@@ -119,189 +82,10 @@ public class PlayUno {
 		}
 
 	}
-	/**
-	 * Find out which card the user wants to play/lay down/ ...
-	 */
-	private UnoCard chooseCard(UnoCard topDiscard)
-	{
-		int cardWanted = 1;
-		boolean valid = false;
-		Scanner in = new Scanner(System.in);
-		int selection = 1;
-		ArrayList<UnoCard> options = validOptions(human, topDiscard);
-		int max = options.size();
-		if (max == 0)
-		{
-			return null;
-		}
-		UnoCard choice = null;
-		while (!valid)
-		{
-			for (UnoCard card : options)
-			{
-				System.out.println("" + cardWanted + ": " + card.toString() );
-				cardWanted++;
-			}
-			try {
-				selection = in.nextInt();
-				in.nextLine();
-				if ((selection > 0) && (selection <= options.size()))
-				{
-					choice = options.get(selection-1);
-					if (choice.playable(topDiscard))
-						valid = true;
-					return choice;
-				}
-				else
-				{
-					System.out.println("Selection an option between 1 and " + options.size());
-				}
-			}
-			//this will catch the mismatch and prevent the error
-			catch(InputMismatchException ex)
-			{
-				//still need to gobble up the end of line
-				in.nextLine();
-				System.out.println("Invalid entry -- enter a number between 1 and " + max);
-			}
-			if (!valid)
-			{
-				cardWanted = 1;
-			}
-		}
-		return null;
-	}
+	
 
 
-	/**
-	 * This method finds out what the human wants to do. If they want, they can change strategy or
-	 * undo but eventually this method needs to return the next card they want to play 
-	 * @return
-	 */
-	public UnoCard nextHumanCard()
-	{
-		boolean done = false;
-		UnoCard nextCard = null;
-		//First, figure out what the player should do. 
-		while (!done)
-		{
-			int choice = playerMenu();
-			switch(choice) {
-			case CHOOSE_CARD:
-				nextCard = chooseCard(discards.getTop());
-				done = true;
-				break;
-			case UNDO_MOVE:
-				System.out.println("Not implemented");
-				break;
-			case CHANGE_STRATEGY:
-				System.out.println("Not implemented");
-				break;	
-			}
-		}
-		return nextCard;
-
-	}
-
-	public  ArrayList<UnoCard> validOptions(Player currentPlayer, UnoCard topCard)
-	{
-		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
-		for (UnoCard card : currentPlayer.getHand())
-		{
-			if (card.playable(topCard))
-			{
-				inRange.add(card);
-			}
-		}
-		return inRange;
-	}
-	/**
-	 * Get the next card for the computer player
-	 * @return - the playing card
-	 */
-	public UnoCard nextComputerCard()
-	{
-		UnoCard nextCard = null;
-		//for now, just grab a random card within the limit
-		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
-		UnoCard top = discards.getTop();
-		inRange = validOptions(computer, top);
-		if (inRange.isEmpty())
-		{
-			return null;
-		}
-		else
-		{
-			//Shuffle the in range cards and choose one at random
-			Collections.shuffle(inRange);
-			nextCard =  inRange.get(0);
-		}
-		if (nextCard != null)
-		{
-			System.out.println("Computer played: " + nextCard);
-		}
-		return nextCard;
-	}
-
-	/**
-	 * Executes play for a specific player (human or computer)
-	 * @return won - return True if this play made the player win
-	 */
-	public UnoCard playCard(Player currentPlayer)
-	{
-		UnoCard cardPlayed = null;
-
-		//Find the card we want to play
-		if (currentPlayer == computer)
-		{
-			cardPlayed = nextComputerCard();
-		}
-		else
-		{
-			cardPlayed = nextHumanCard();
-		}
-		//Check to see if we could play a card
-		if (cardPlayed != null)
-		{
-			discards.addCard(cardPlayed);
-			currentPlayer.removeCard(cardPlayed);
-		}
-		else
-		{
-			System.out.println("Could not play a card. Need to draw.");
-			UnoCard cardDrawn = drawCards(currentPlayer, 1);	
-			System.out.println(currentPlayer.getName() + " drew " + cardDrawn);
-			if (cardDrawn.playable(discards.getTop()))
-			{
-				discards.addCard(cardDrawn);
-				currentPlayer.removeCard(cardDrawn);
-				System.out.println(currentPlayer.getName() + " playing: " + cardDrawn);
-				cardPlayed = cardDrawn;
-			}
-		}
-
-		System.out.println(currentPlayer);
-		return cardPlayed;
-
-
-
-	}
-
-
-	/**
-	 * If we have run out of cards to draw but players still have cards in their hands we need to
-	 * return the discards
-	 */
-	public void resetDeck()
-	{
-		UnoCard topCard = discards.draw();
-		ArrayList<UnoCard> ourDiscards = discards.getDiscards();
-		deck.returnCards(ourDiscards);
-		deck.shuffle();
-		discards = new DiscardPile();
-		discards.addCard(topCard);
-
-	}
+	
 
 	/**
 	 * This code swaps the players and returns a new current player.
@@ -322,21 +106,7 @@ public class PlayUno {
 		}
 	}
 
-	public UnoCard drawCards(Player currentPlayer, int numCards)
-	{
-		UnoCard lastDrawn = null;
-		for (int i = 0; i < numCards; i++)
-		{
-			//Make sure there are still cards in the deck!
-			if (deck.size() == 0)
-			{
-				System.out.println("Shuffling discards back into the deck");
-				resetDeck();
-			}
-			lastDrawn = currentPlayer.draw(deck, 1);
-		}
-		return lastDrawn;
-	}
+	
 	/**
 	 * Plays a game of Uno!
 	 */
@@ -374,11 +144,11 @@ public class PlayUno {
 			computer.resetForNewHand();
 			discards = new DiscardPile();
 
-			discards.addCard(deck.draw()); //Need a card to start play
+			discards.addCard(deck.pop()); //Need a card to start play
 
 			//Deal initial cards to each player
-			human.draw(deck, PlayUno.START_CARDS);
-			computer.draw(deck, PlayUno.START_CARDS);
+			human.draw(deck, discards, PlayUno.START_CARDS);
+			computer.draw(deck, discards, PlayUno.START_CARDS);
 
 			System.out.println(human);
 			System.out.println(computer);
@@ -405,13 +175,13 @@ public class PlayUno {
 					if (numToDraw > 0)
 					{
 						System.out.println(currentPlayer.getName() + " is drawing " + numToDraw + " cards from the deck");
-						drawCards(currentPlayer, numToDraw);
+						currentPlayer.draw(deck, discards, numToDraw);
 						System.out.println(currentPlayer);
 					}
 				}
 
 				//Play a card!
-				playCard(currentPlayer);
+				currentPlayer.playCard(deck, discards);
 				//If the top card is wild, figure out the color	
 				if (discards.getTop().isWild())
 				{
@@ -434,7 +204,7 @@ public class PlayUno {
 					{
 						Player opposite = oppositePlayer(currentPlayer);
 						System.out.println(opposite.getName() + " is drawing " + numToDraw + " cards from the deck");
-						drawCards(opposite, numToDraw);
+						opposite.draw(deck, discards,numToDraw);
 						System.out.println(opposite);
 					}
 					playerOut = true;

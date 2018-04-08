@@ -6,24 +6,14 @@ import java.util.Collections;
  * @author jburge
  *
  */
-public class Player {
+abstract public class Player {
 
-	private String name;
-	private ArrayList<UnoCard> myHand;
-	private UnoCard lastCardPlayed;
-	private int points;
+	protected String name;
+	protected ArrayList<UnoCard> myHand;
+	protected UnoCard lastCardPlayed;
+	protected int points;
 
-	/**
-	 * Creates a Player and gives them a name
-	 * @param name
-	 */
-	public Player(String name)
-	{
-		this.name = name;
-		myHand = new ArrayList<UnoCard>();
-		lastCardPlayed = null;
-		points = 0;
-	}
+
 
 	/**
 	 * Resets the player for a new hand
@@ -95,12 +85,18 @@ public class Player {
 	 * @param deck the deck of cards
 	 * @return the last card dealt
 	 */
-	public UnoCard draw(Deck deck, int numCards)
+	public UnoCard draw(Deck deck, DiscardPile discards, int numCards)
 	{
 		UnoCard cardDealt = null;
+		//Make sure there are still cards in the deck!
+		if (deck.size() == 0)
+		{
+			System.out.println("Shuffling discards back into the deck");
+			deck.reset(discards);
+		}
 		for (int i=0; i < numCards; i++)
 		{
-			cardDealt = deck.draw();
+			cardDealt = deck.pop();
 			if (cardDealt != null)
 			{
 				myHand.add(cardDealt);
@@ -109,6 +105,7 @@ public class Player {
 		//Sort the hand
 		Collections.sort(myHand);
 		return cardDealt;
+
 	}
 
 	/**
@@ -173,6 +170,53 @@ public class Player {
 		return player;
 	}
 
+	public  ArrayList<UnoCard> validOptions(UnoCard topCard)
+	{
+		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
+		for (UnoCard card : getHand())
+		{
+			if (card.playable(topCard))
+			{
+				inRange.add(card);
+			}
+		}
+		return inRange;
+	}
+
+	abstract protected UnoCard nextCard(DiscardPile discards);
+	/**
+	 * Executes play for a specific player (human or computer)
+	 * @return won - return True if this play made the player win
+	 */
+	public UnoCard playCard(Deck deck, DiscardPile discards)
+	{
+		UnoCard cardPlayed = null;
+
+		//Find the card we want to play
+		cardPlayed = nextCard(discards);
+		//Check to see if we could play a card
+		if (cardPlayed != null)
+		{
+			//discards.addCard(cardPlayed);
+			removeCard(cardPlayed);
+		}
+		else
+		{
+			System.out.println("Could not play a card. Need to draw.");
+			UnoCard cardDrawn = draw(deck, discards, 1);	
+			System.out.println(getName() + " drew " + cardDrawn);
+			if (cardDrawn.playable(discards.getTop()))
+			{
+				discards.addCard(cardDrawn);
+				removeCard(cardDrawn);
+				System.out.println(getName() + " playing: " + cardDrawn);
+				cardPlayed = cardDrawn;
+			}
+		}
+
+		System.out.println(this);
+		return cardPlayed;
+	}
 
 
 }

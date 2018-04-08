@@ -52,7 +52,7 @@ public class DiscardPile {
 	 * Gets the top card and removes it from the discard pile
 	 * @return
 	 */
-	public UnoCard draw()
+	public UnoCard pop()
 	{
 		return discardedCards.pop();
 	}
