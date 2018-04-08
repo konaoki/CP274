@@ -85,18 +85,18 @@ abstract public class Player {
 	 * @param deck the deck of cards
 	 * @return the last card dealt
 	 */
-	public UnoCard draw(Deck deck, DiscardPile discards, int numCards)
+	public UnoCard draw(int numCards)
 	{
 		UnoCard cardDealt = null;
 		//Make sure there are still cards in the deck!
-		if (deck.size() == 0)
+		if (PlayUno.deck.size() == 0)
 		{
 			System.out.println("Shuffling discards back into the deck");
-			deck.reset(discards);
+			PlayUno.deck.reset(PlayUno.discards);
 		}
 		for (int i=0; i < numCards; i++)
 		{
-			cardDealt = deck.pop();
+			cardDealt = PlayUno.deck.pop();
 			if (cardDealt != null)
 			{
 				myHand.add(cardDealt);
@@ -183,31 +183,32 @@ abstract public class Player {
 		return inRange;
 	}
 
-	abstract protected UnoCard nextCard(DiscardPile discards);
+	abstract protected UnoCard nextCard();
 	/**
 	 * Executes play for a specific player (human or computer)
 	 * @return won - return True if this play made the player win
 	 */
-	public UnoCard playCard(Deck deck, DiscardPile discards)
+	public UnoCard playCard()
 	{
 		UnoCard cardPlayed = null;
 
 		//Find the card we want to play
-		cardPlayed = nextCard(discards);
+		cardPlayed = nextCard();
 		//Check to see if we could play a card
 		if (cardPlayed != null)
 		{
 			//discards.addCard(cardPlayed);
+			PlayUno.discards.addCard(cardPlayed);
 			removeCard(cardPlayed);
 		}
 		else
 		{
 			System.out.println("Could not play a card. Need to draw.");
-			UnoCard cardDrawn = draw(deck, discards, 1);	
+			UnoCard cardDrawn = draw(1);	
 			System.out.println(getName() + " drew " + cardDrawn);
-			if (cardDrawn.playable(discards.getTop()))
+			if (cardDrawn.playable(PlayUno.discards.getTop()))
 			{
-				discards.addCard(cardDrawn);
+				PlayUno.discards.addCard(cardDrawn);
 				removeCard(cardDrawn);
 				System.out.println(getName() + " playing: " + cardDrawn);
 				cardPlayed = cardDrawn;
@@ -216,6 +217,14 @@ abstract public class Player {
 
 		System.out.println(this);
 		return cardPlayed;
+	}
+	public boolean equals(Player other)
+	{
+		if(other.getName().equals(this.getName()))
+		{
+			return true;
+		}
+		return false;
 	}
 
 

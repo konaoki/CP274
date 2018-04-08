@@ -10,10 +10,6 @@ public class HumanPlayer extends Player{
 		lastCardPlayed = null;
 		points = 0;
 	}
-	public UnoCard playCard()
-	{
-		return null;
-	}
 	
 	/**
 	 * Find out which card the user wants to play/lay down/ ...
@@ -68,12 +64,25 @@ public class HumanPlayer extends Player{
 		return null;
 	}
 	
+	private int chooseStrategy()
+	{
+		System.out.println("Choose strategy 1, 2, or 3");
+		System.out.println("1: Computer plays random");
+		System.out.println("2: Computer plays the higest pointed card");
+		System.out.println("3: Computer plays the lowest pointed card");
+		Scanner in = new Scanner(System.in);
+		int strategy = in.nextInt();
+		in.nextLine();
+		return strategy;
+		
+	}
+	
 	/**
 	 * This method finds out what the human wants to do. If they want, they can change strategy or
 	 * undo but eventually this method needs to return the next card they want to play 
 	 * @return
 	 */
-	public UnoCard nextCard(DiscardPile discards)
+	protected UnoCard nextCard()
 	{
 		boolean done = false;
 		UnoCard nextCard = null;
@@ -83,14 +92,15 @@ public class HumanPlayer extends Player{
 			int choice = playerMenu();
 			switch(choice) {
 			case PlayUno.CHOOSE_CARD:
-				nextCard = chooseCard(discards.getTop());
+				nextCard = chooseCard(PlayUno.discards.getTop());
 				done = true;
 				break;
 			case PlayUno.UNDO_MOVE: //undo
-				System.out.println("Not implemented");
+				PlayUno.command.undo();
 				break;
 			case PlayUno.CHANGE_STRATEGY: //change strategy
-				System.out.println("Not implemented");
+				PlayerFactory factory = new PlayerFactory();
+				PlayUno.computer = factory.makePlayer(chooseStrategy(), name);
 				break;	
 			}
 		}

@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RandomComputer extends Player {
+public class PointsComputer extends Player{
 	/**
 	 * Creates a Player and gives them a name
 	 * @param name
 	 */
-	public RandomComputer(String name)
+	public PointsComputer(String name)
 	{
 		this.name = name;
 		myHand = new ArrayList<UnoCard>();
@@ -30,9 +30,9 @@ public class RandomComputer extends Player {
 		}
 		else
 		{
-			//Shuffle the in range cards and choose one at random
-			Collections.shuffle(inRange);
-			nextCard =  inRange.get(0);
+			//sort and get highest pointed card i.e. last one
+			Collections.sort(inRange);
+			nextCard =  inRange.get(inRange.size()-1);
 		}
 		if (nextCard != null)
 		{
@@ -40,6 +40,5 @@ public class RandomComputer extends Player {
 		}
 		return nextCard;
 	}
-
 
 }

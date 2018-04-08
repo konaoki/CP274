@@ -1,13 +1,6 @@
-/ApprovalRatingStrategy.class
-/ApprovalRatingVoter.class
-/Candidate.class
+/IO.class
+/LoserTakesAllStrategy.class
 /PointsPerPlaceStrategy.class
-/PointsPerPlaceVoter.class
-/TabulationStrategy.class
-/Voter$Type.class
-/Voter.class
-/VoterFactory.class
-/VoterTester.class
+/Strategy.class
 /WinnerTakesAllStrategy.class
-/WinnerTakesAllVoter.class
-/LoserTakesAllVoter.class
+/test1.class

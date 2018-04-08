@@ -22,11 +22,15 @@ public class PlayUno {
 	private static final String colors[] = {UnoCard.RED, UnoCard.BLUE, UnoCard.GREEN, UnoCard.YELLOW};
 
 
-	private Deck deck;
-	private Player human = new HumanPlayer("Human");
-	private Player computer = new RandomComputer("Computer");
-	private DiscardPile discards = new DiscardPile();
+	public static Deck deck;
+	public static PlayerFactory factory = new PlayerFactory();
+	public static Player human=factory.makePlayer(1,"human");
+	public static Player computer=factory.makePlayer(2,"computer");
+	public static DiscardPile discards = new DiscardPile();
+	public static GameStatusList gameStatusList = new GameStatusList(); 
+	public static ConcreteCommand command = new ConcreteCommand();
 	private UnoCard starter;
+	
 
 
 	/**
@@ -105,6 +109,7 @@ public class PlayUno {
 			return human;
 		}
 	}
+	
 
 	
 	/**
@@ -112,6 +117,9 @@ public class PlayUno {
 	 */
 	public void playGame()
 	{
+		
+		human = factory.makePlayer(0,"Human");
+		computer = factory.makePlayer(1,"Computer");
 		Scanner in = new Scanner(System.in);
 		boolean isWinner = false;
 		boolean playerOut = false;
@@ -147,8 +155,8 @@ public class PlayUno {
 			discards.addCard(deck.pop()); //Need a card to start play
 
 			//Deal initial cards to each player
-			human.draw(deck, discards, PlayUno.START_CARDS);
-			computer.draw(deck, discards, PlayUno.START_CARDS);
+			human.draw(PlayUno.START_CARDS);
+			computer.draw(PlayUno.START_CARDS);
 
 			System.out.println(human);
 			System.out.println(computer);
@@ -156,10 +164,18 @@ public class PlayUno {
 			//While we still have cards left to play...
 			while (!playerOut)
 			{
+				GameStatus gameStatus = new GameStatus(deck, currentPlayer, human, computer, discards);
+				gameStatusList.pushStatus(gameStatus);
+				deck = gameStatusList.getLatestStatus().getDeck();
+				discards = gameStatusList.getLatestStatus().getDiscards();
+				currentPlayer = gameStatusList.getLatestStatus().getCurrent();
+				human = gameStatusList.getLatestStatus().getHuman();
+				computer = gameStatusList.getLatestStatus().getComputer();
 				UnoCard topCard = discards.getTop();
 				System.out.println("Top of discard pile = " + topCard);
 
 				System.out.println("Current player is " + currentPlayer.getName());
+				
 				//Start the round - is the top card telling you that you have to do something? Do it!
 
 				//If the top card is Skip or Reverse then we swap players
@@ -167,6 +183,7 @@ public class PlayUno {
 				{
 					System.out.println("Skipping current player");
 					currentPlayer = oppositePlayer(currentPlayer);
+					gameStatusList.getLatestStatus().setCurrent(currentPlayer);
 					System.out.println("Current player is " + currentPlayer.getName());
 				}
 				if (topCard != currentPlayer.getLastCardPlayed())
@@ -175,13 +192,13 @@ public class PlayUno {
 					if (numToDraw > 0)
 					{
 						System.out.println(currentPlayer.getName() + " is drawing " + numToDraw + " cards from the deck");
-						currentPlayer.draw(deck, discards, numToDraw);
+						currentPlayer.draw(numToDraw);
 						System.out.println(currentPlayer);
 					}
 				}
 
 				//Play a card!
-				currentPlayer.playCard(deck, discards);
+				currentPlayer.playCard();
 				//If the top card is wild, figure out the color	
 				if (discards.getTop().isWild())
 				{
@@ -204,7 +221,7 @@ public class PlayUno {
 					{
 						Player opposite = oppositePlayer(currentPlayer);
 						System.out.println(opposite.getName() + " is drawing " + numToDraw + " cards from the deck");
-						opposite.draw(deck, discards,numToDraw);
+						opposite.draw(numToDraw);
 						System.out.println(opposite);
 					}
 					playerOut = true;
@@ -213,8 +230,12 @@ public class PlayUno {
 				else
 				{
 					currentPlayer = oppositePlayer(currentPlayer);
+					gameStatusList.getLatestStatus().setCurrent(currentPlayer);
 				}
-
+				
+				gameStatus = new GameStatus(deck, currentPlayer, human, computer, discards);
+				gameStatusList.pushStatus(gameStatus);
+				command.set(gameStatusList);
 			}
 
 			//Count up the points in the opponent's hand 
