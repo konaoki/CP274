@@ -64,18 +64,7 @@ public class HumanPlayer extends Player{
 		return null;
 	}
 	
-	private int chooseStrategy()
-	{
-		System.out.println("Choose strategy 1, 2, or 3");
-		System.out.println("1: Computer plays random");
-		System.out.println("2: Computer plays the higest pointed card");
-		System.out.println("3: Computer plays the lowest pointed card");
-		Scanner in = new Scanner(System.in);
-		int strategy = in.nextInt();
-		in.nextLine();
-		return strategy;
-		
-	}
+	
 	
 	/**
 	 * This method finds out what the human wants to do. If they want, they can change strategy or
