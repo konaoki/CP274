@@ -28,7 +28,6 @@ public class PlayUno {
 	private DiscardPile discards = new DiscardPile();
 	private GameStatus gameStatus = new GameStatus(computer, human, null, discards, deck);
 	private Stack<GameStatus> gameStatusHistory = new Stack<GameStatus>(); 
-
 	private UnoCard starter;
 
 
@@ -80,7 +79,11 @@ public class PlayUno {
 		}
 		return selection;
 	}
-
+	/**
+	 * determines the color
+	 * @param currentPlayer
+	 * @return the color
+	 */
 	private String determineColor(Player currentPlayer)
 	{
 		if (currentPlayer == gameStatus.getHuman())
@@ -174,7 +177,12 @@ public class PlayUno {
 		}
 		return null;
 	}
-	
+	/**
+	 * returns the list of valid cards the player can play
+	 * @param currentPlayer
+	 * @param topCard
+	 * @return the cards
+	 */
 	public  ArrayList<UnoCard> validOptions(Player currentPlayer, UnoCard topCard)
 	{
 		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
@@ -211,7 +219,8 @@ public class PlayUno {
 				System.out.println("rolling back...");
 				Command com = new ConcreteCommand(gameStatusHistory);
 				gameStatusHistory = com.undo();
-				gameStatus = gameStatusHistory.peek();
+				if(!gameStatusHistory.empty())
+					gameStatus = gameStatusHistory.peek();
 				System.out.println("----------------------");
 				System.out.println("saved status history");
 				ArrayList<GameStatus> list2 = new ArrayList(gameStatusHistory);
@@ -332,7 +341,12 @@ public class PlayUno {
 			return gameStatus.getHuman();
 		}
 	}
-
+	/**
+	 * draws the card from a player
+	 * @param currentPlayer
+	 * @param numCards
+	 * @return the last card drawn
+	 */
 	public UnoCard drawCards(Player currentPlayer, int numCards)
 	{
 		UnoCard lastDrawn = null;

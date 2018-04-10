@@ -1,11 +1,23 @@
 import java.util.ArrayList;
 import java.util.Collections;
-
+/**
+ * the class for the strategy where the computer discards the lowest pointed card in his hand
+ * @author konao
+ *
+ */
 public class LowestPointsStrategy extends ComputerStrategy  {
+	/**
+	 * constructor
+	 * @param player
+	 */
 	public LowestPointsStrategy(Player player)
 	{
 		this.player=player;
 	}
+	/**
+	 * derives the next card the computer will play according to this strategy
+	 * @return the unocard
+	 */
 	public UnoCard nextCard(DiscardPile discards)
 	{
 		UnoCard nextCard = null;

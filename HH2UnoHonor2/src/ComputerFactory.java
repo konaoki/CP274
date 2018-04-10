@@ -1,6 +1,16 @@
 import java.util.ArrayList;
-
+/**
+ * factory for creating new computers
+ * @author konao
+ *
+ */
 public class ComputerFactory {
+	/**
+	 * creates new computer with some strategy
+	 * @param i the strategy id
+	 * @param name the name of the player
+	 * @return returns the computer created
+	 */
 	public Player makePlayer(int i, String name)
 	{
 		
@@ -24,6 +34,12 @@ public class ComputerFactory {
 		}
 		return null;
 	}
+	/**
+	 * method to change the strategy of a computer
+	 * @param i strategy to change it to
+	 * @param current the current computer instance
+	 * @return the comptuer created
+	 */
 	public Player changePlayer(int i, Player current)
 	{
 		ArrayList<UnoCard> hand = new ArrayList();
@@ -50,6 +66,11 @@ public class ComputerFactory {
 		}
 		return null;
 	}
+	/**
+	 * method to copy computer instance
+	 * @param other the other computer to copy from
+	 * @return the computer created
+	 */
 	public Player copyPlayer(Player other)
 	{
 		Player p = new Player(other.getName());

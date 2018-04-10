@@ -21,6 +21,10 @@ public class Deck {
 		this.deckSize = deckSize;
 		this.initializeDeck();
 	}
+	/**
+	 * copy constructor
+	 * @param other
+	 */
 	public Deck(Deck other)
 	{
 		ArrayList<UnoCard> list = new ArrayList();
@@ -29,7 +33,10 @@ public class Deck {
 		deckSize = other.getDeckSize();
 	}
 	
-
+	/**
+	 * gets the deck
+	 * @return the deck as UnoCard arraylist
+	 */
 	public ArrayList<UnoCard> getDeck() {
 		return deck;
 	}

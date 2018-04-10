@@ -1,16 +1,23 @@
 import java.util.ArrayList;
 import java.util.Collections;
-
+/**
+ * the class for the strategy where the computer discards randomly
+ * @author konao
+ *
+ */
 public class RandomStrategy extends ComputerStrategy {
+	/**
+	 * constructor
+	 * @param player
+	 */
 	public RandomStrategy(Player player)
 	{
 		this.player=player;
 	}
 	/**
-	 * Get the next card for the computer player
-	 * @return - the playing card
+	 * derives the next card the computer will play according to this strategy
+	 * @return the unocard
 	 */
-	
 	public UnoCard nextCard(DiscardPile discards)
 	{
 		UnoCard nextCard = null;

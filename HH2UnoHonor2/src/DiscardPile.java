@@ -19,12 +19,20 @@ public class DiscardPile {
 	public DiscardPile() {
 		discardedCards = new Stack<UnoCard>();
 	}
+	/**
+	 * copy constructor
+	 * @param other
+	 */
 	public DiscardPile(DiscardPile other)
 	{
 		Stack<UnoCard> stack = new Stack();
 		stack.addAll(other.getDiscardedCards());
 		discardedCards = stack;
 	}
+	/**
+	 * gets the discarded cards
+	 * @return returns the unocard stack
+	 */
 	public Stack<UnoCard> getDiscardedCards()
 	{
 		return discardedCards;

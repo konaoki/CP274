@@ -34,11 +34,18 @@ public class Player {
 		points = other.getPoints();
 		strategy = other.getStrategy();
 	}
-
+	/**
+	 * sets the strategy of this player
+	 * @param strategy
+	 */
 	public void setStrategy(ComputerStrategy strategy)
 	{
 		this.strategy = strategy;
 	}
+	/**
+	 * gets the strategy
+	 * @return the strategy
+	 */
 	public ComputerStrategy getStrategy()
 	{
 		return this.strategy;
@@ -98,12 +105,18 @@ public class Player {
 	{
 		this.points += points;
 	}
-
+	/**
+	 * returns the points
+	 * @param points
+	 */
 	public void returnPoints(int points)
 	{
 		this.points -= points;
 	}
-
+	/**
+	 * getter
+	 * @return the points
+	 */
 	public int getPoints()
 	{
 		return this.points;
@@ -145,12 +158,18 @@ public class Player {
 	{
 		return myHand.size() == 1;
 	}
-
+	/**
+	 * if player is out of cards
+	 * @return true is player is out
+	 */
 	public boolean out()
 	{
 		return myHand.size() == 0;
 	}
-
+	/**
+	 * the score
+	 * @return the score
+	 */
 	public int scoreHand()
 	{
 		int total = 0;
@@ -191,7 +210,11 @@ public class Player {
 		return player;
 	}
 	
-	
+	/**
+	 * returns list of cards that are valid to play for this player
+	 * @param topCard
+	 * @return
+	 */
 	public ArrayList<UnoCard> validOptions(UnoCard topCard)
 	{
 		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
@@ -204,6 +227,13 @@ public class Player {
 		}
 		return inRange;
 	}
+	/**
+	 * sets all the info for this player
+	 * @param name
+	 * @param myHand
+	 * @param lastCardPlayed
+	 * @param points
+	 */
 	public void setInfo(String name, ArrayList<UnoCard> myHand, UnoCard lastCardPlayed, int points)
 	{
 		this.name=name;
@@ -211,6 +241,19 @@ public class Player {
 		this.lastCardPlayed = lastCardPlayed;
 		this.points = points;
 	}
+	/**
+	 * sets the hand for this player
+	 * @param myHand
+	 */
+	public void setHand(ArrayList<UnoCard> myHand)
+	{
+		this.myHand = myHand;
+	}
+	/**
+	 * checks for equality between players
+	 * @param other
+	 * @return
+	 */
 	public boolean equals(Player other)
 	{
 		if(other.getName().equals(this.getName()))

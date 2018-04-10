@@ -40,16 +40,24 @@ public class UnoCard implements Comparable {
 		this.id = counter;
 		this.counter += 1;
 	}
+	/**
+	 * copy constructor
+	 * @param other
+	 */
 	public UnoCard(UnoCard other)
 	{
 		this.color = other.getColor();
 		this.type = other.getType();
 	}
-
+	/**
+	 * gets the name of the card
+	 * @param value
+	 * @return the name as String
+	 */
 	public static String getName(int value) {
 		return types[value];
 	}
-
+	
 	/**
 	 * Converts from the name to the type
 	 * @param name the name of the card
@@ -66,15 +74,31 @@ public class UnoCard implements Comparable {
 		}
 		return INVALID;
 	}
+	/**
+	 * gets color
+	 * @return the color
+	 */
 	public String getColor() {
 		return color;
 	}
+	/**
+	 * setter
+	 * @param color
+	 */
 	public void setColor(String color) {
 		this.color = color;
 	}
+	/**
+	 * getter
+	 * @return type
+	 */
 	public int getType() {
 		return type;
 	}
+	/**
+	 * setter
+	 * @param type
+	 */
 	public void setType(int type) {
 		this.type = type;
 	}
@@ -160,7 +184,11 @@ public class UnoCard implements Comparable {
 			this.color = UnoCard.WILD; //reset the color since it is back to being a normal wildcard
 		}
 	}
-
+	/**
+	 * checks for type equality
+	 * @param type
+	 * @return true is types are same
+	 */
 	public boolean equalsType(int type) {
 		return this.type == type;
 	}
@@ -176,7 +204,7 @@ public class UnoCard implements Comparable {
 		if (o.getClass() == this.getClass())
 		{
 			UnoCard card = (UnoCard) o;
-			if (card.color.equals(this.color) && (card.type == this.type) && (card.id == this.id))
+			if (card.color.equals(this.color) && (card.type == this.type))
 			{
 				return true;
 			}
