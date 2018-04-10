@@ -204,7 +204,7 @@ public class UnoCard implements Comparable {
 		if (o.getClass() == this.getClass())
 		{
 			UnoCard card = (UnoCard) o;
-			if (card.color.equals(this.color) && (card.type == this.type))
+			if (card.color.equals(this.color) && (card.type == this.type) && (card.id == this.id))
 			{
 				return true;
 			}

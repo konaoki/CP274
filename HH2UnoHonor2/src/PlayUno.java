@@ -25,9 +25,11 @@ public class PlayUno {
 	private Deck deck;
 	private Player human = new Player("Human");
 	private Player computer = computerFactory.makePlayer(1, "Computer");
+	private Stack<GameStatus> gameStatusHistory = new Stack<GameStatus>();
 	private DiscardPile discards = new DiscardPile();
 	private GameStatus gameStatus = new GameStatus(computer, human, null, discards, deck);
-	private Stack<GameStatus> gameStatusHistory = new Stack<GameStatus>(); 
+	
+	private Stack<Command> commandHistory = new Stack<Command>(); 
 	private UnoCard starter;
 
 

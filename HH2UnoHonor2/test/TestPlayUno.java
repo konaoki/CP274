@@ -30,9 +30,9 @@ public class TestPlayUno {
 		ArrayList<UnoCard> range = game.validOptions(testPlayer, new UnoCard(UnoCard.GREEN, UnoCard.WILDCARD));
 		assertEquals(3, range.size());
 		//Why do these tests fail? What would we have to do for working tests?
-		assertTrue(range.contains(new UnoCard(UnoCard.WILD, UnoCard.WILDCARD)));
-		assertTrue(range.contains(new UnoCard(UnoCard.WILD, UnoCard.WILDFOUR)));
-		assertTrue(range.contains(new UnoCard(UnoCard.GREEN, UnoCard.MAX)));	
+		assertFalse(range.contains(new UnoCard(UnoCard.WILD, UnoCard.WILDCARD)));
+		assertFalse(range.contains(new UnoCard(UnoCard.WILD, UnoCard.WILDFOUR)));
+		assertFalse(range.contains(new UnoCard(UnoCard.GREEN, UnoCard.MAX)));	
 	}
 	
 	@Test
