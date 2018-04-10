@@ -1,35 +1,67 @@
+import java.util.ArrayList;
 
 public class ComputerFactory {
 	public Player makePlayer(int i, String name)
 	{
+		
 		switch(i)
 		{
 		case 1:
-			return new RandomComputerPlayer(name);
+			Player p = new Player(name);
+			ComputerStrategy strat = new RandomStrategy(p);
+			p.setStrategy(strat);
+			return p;
 		case 2:
-			return new HighestPointsComputerPlayer(name);
+			p = new Player(name);
+			strat = new HighestPointsStrategy(p);
+			p.setStrategy(strat);
+			return p;
 		case 3:
-			return new LowestPointsComputerPlayer(name);
+			p = new Player(name);
+			strat = new LowestPointsStrategy(p);
+			p.setStrategy(strat);
+			return p;
 		}
 		return null;
 	}
 	public Player changePlayer(int i, Player current)
 	{
+		ArrayList<UnoCard> hand = new ArrayList();
+		hand.addAll(current.getHand());
 		switch(i)
 		{
 		case 1:
-			Player r = new RandomComputerPlayer(current.getName());
-			r.setInfo(current.getName(), current.getHand(), current.getLastCardPlayed(), current.getPoints());
-			return r;
+			Player p = copyPlayer(current);
+			ComputerStrategy strat = new RandomStrategy(p);
+			p.setStrategy(strat);
+			return p;
 		case 2:
-			Player h = new HighestPointsComputerPlayer(current.getName());
-			h.setInfo(current.getName(), current.getHand(), current.getLastCardPlayed(), current.getPoints());
-			return h;
+			p = copyPlayer(current);
+			strat = new HighestPointsStrategy(p);
+			p.setStrategy(strat);
+			
+			return p;
 		case 3:
-			Player l = new LowestPointsComputerPlayer(current.getName());
-			l.setInfo(current.getName(), current.getHand(), current.getLastCardPlayed(), current.getPoints());
-			return l;
+			p = copyPlayer(current);
+			strat = new LowestPointsStrategy(p);
+			p.setStrategy(strat);
+			
+			return p;
 		}
 		return null;
+	}
+	public Player copyPlayer(Player other)
+	{
+		Player p = new Player(other.getName());
+		p.setStrategy(other.getStrategy());
+		ArrayList<UnoCard> hand = new ArrayList();
+		hand.addAll(other.getHand());
+		UnoCard card;
+		if(other.getLastCardPlayed()!=null)
+			card = new UnoCard(other.getLastCardPlayed());
+		else
+			card=null;
+		p.setInfo(other.getName(), hand, card, other.getPoints());
+		return p;
 	}
 }

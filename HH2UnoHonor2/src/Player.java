@@ -12,6 +12,7 @@ public class Player {
 	protected ArrayList<UnoCard> myHand;
 	protected UnoCard lastCardPlayed;
 	protected int points;
+	protected ComputerStrategy strategy;
 
 	/**
 	 * Creates a Player and gives them a name
@@ -23,8 +24,25 @@ public class Player {
 		myHand = new ArrayList<UnoCard>();
 		lastCardPlayed = null;
 		points = 0;
+		this.strategy=null;
+	}
+	public Player(Player other)
+	{
+		name = other.getName();
+		myHand = other.getHand();
+		lastCardPlayed = other.getLastCardPlayed();
+		points = other.getPoints();
+		strategy = other.getStrategy();
 	}
 
+	public void setStrategy(ComputerStrategy strategy)
+	{
+		this.strategy = strategy;
+	}
+	public ComputerStrategy getStrategy()
+	{
+		return this.strategy;
+	}
 	/**
 	 * Resets the player for a new hand
 	 * @return
@@ -173,6 +191,7 @@ public class Player {
 		return player;
 	}
 	
+	
 	public ArrayList<UnoCard> validOptions(UnoCard topCard)
 	{
 		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
@@ -185,13 +204,20 @@ public class Player {
 		}
 		return inRange;
 	}
-	
-	public UnoCard nextCard(DiscardPile discards)
-	{
-		return null;
-	}
 	public void setInfo(String name, ArrayList<UnoCard> myHand, UnoCard lastCardPlayed, int points)
 	{
+		this.name=name;
+		this.myHand = myHand;
+		this.lastCardPlayed = lastCardPlayed;
+		this.points = points;
+	}
+	public boolean equals(Player other)
+	{
+		if(other.getName().equals(this.getName()))
+		{
+			return true;
+		}
+		return false;
 	}
 
 

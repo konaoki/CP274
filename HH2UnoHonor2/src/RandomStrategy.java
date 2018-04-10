@@ -1,17 +1,16 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RandomComputerPlayer extends Player implements ComputerPlayer {
-	public RandomComputerPlayer(String name)
+public class RandomStrategy extends ComputerStrategy {
+	public RandomStrategy(Player player)
 	{
-		super(name);
+		this.player=player;
 	}
 	/**
 	 * Get the next card for the computer player
 	 * @return - the playing card
 	 */
 	
-	@Override
 	public UnoCard nextCard(DiscardPile discards)
 	{
 		UnoCard nextCard = null;
@@ -25,9 +24,9 @@ public class RandomComputerPlayer extends Player implements ComputerPlayer {
 		}
 		else
 		{
-			//sort and get highest pointed card i.e. last one
-			Collections.sort(inRange);
-			nextCard =  inRange.get(inRange.size()-1);
+			//Shuffle the in range cards and choose one at random
+			Collections.shuffle(inRange);
+			nextCard =  inRange.get(0);
 		}
 		if (nextCard != null)
 		{
@@ -35,14 +34,7 @@ public class RandomComputerPlayer extends Player implements ComputerPlayer {
 		}
 		return nextCard;
 	}
-	@Override
-	public void setInfo(String name, ArrayList<UnoCard> myHand, UnoCard lastCardPlayed, int points)
-	{
-		this.name=name;
-		this.myHand = myHand;
-		this.lastCardPlayed = lastCardPlayed;
-		this.points = points;
-	}
+	
 	
 	
 }

@@ -19,6 +19,16 @@ public class DiscardPile {
 	public DiscardPile() {
 		discardedCards = new Stack<UnoCard>();
 	}
+	public DiscardPile(DiscardPile other)
+	{
+		Stack<UnoCard> stack = new Stack();
+		stack.addAll(other.getDiscardedCards());
+		discardedCards = stack;
+	}
+	public Stack<UnoCard> getDiscardedCards()
+	{
+		return discardedCards;
+	}
 
 	/**
 	 * Gets the active pile

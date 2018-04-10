@@ -26,6 +26,9 @@ public class PlayUno {
 	private Player human = new Player("Human");
 	private Player computer = computerFactory.makePlayer(1, "Computer");
 	private DiscardPile discards = new DiscardPile();
+	private GameStatus gameStatus = new GameStatus(computer, human, null, discards, deck);
+	private Stack<GameStatus> gameStatusHistory = new Stack<GameStatus>(); 
+
 	private UnoCard starter;
 
 
@@ -80,7 +83,7 @@ public class PlayUno {
 
 	private String determineColor(Player currentPlayer)
 	{
-		if (currentPlayer == human)
+		if (currentPlayer == gameStatus.getHuman())
 		{
 			Scanner in = new Scanner(System.in);
 			boolean valid = false;
@@ -128,7 +131,7 @@ public class PlayUno {
 		boolean valid = false;
 		Scanner in = new Scanner(System.in);
 		int selection = 1;
-		ArrayList<UnoCard> options = human.validOptions(topDiscard);
+		ArrayList<UnoCard> options = gameStatus.getHuman().validOptions(topDiscard);
 		int max = options.size();
 		if (max == 0)
 		{
@@ -171,6 +174,19 @@ public class PlayUno {
 		}
 		return null;
 	}
+	
+	public  ArrayList<UnoCard> validOptions(Player currentPlayer, UnoCard topCard)
+	{
+		ArrayList<UnoCard> inRange = new ArrayList<UnoCard>();
+		for (UnoCard card : currentPlayer.getHand())
+		{
+			if (card.playable(topCard))
+			{
+				inRange.add(card);
+			}
+		}
+		return inRange;
+	}
 
 
 	/**
@@ -188,21 +204,38 @@ public class PlayUno {
 			int choice = playerMenu();
 			switch(choice) {
 			case CHOOSE_CARD:
-				nextCard = chooseCard(discards.getTop());
+				nextCard = chooseCard(gameStatus.getDiscards().getTop());
 				done = true;
 				break;
 			case UNDO_MOVE:
-				System.out.println("Not implemented");
+				System.out.println("rolling back...");
+				Command com = new ConcreteCommand(gameStatusHistory);
+				gameStatusHistory = com.undo();
+				gameStatus = gameStatusHistory.peek();
+				System.out.println("----------------------");
+				System.out.println("saved status history");
+				ArrayList<GameStatus> list2 = new ArrayList(gameStatusHistory);
+				for(int i=0; i<list2.size(); i++)
+				{
+					System.out.println(list2.get(i));
+				}
+				
+				System.out.println("----------------------");
 				break;
 			case CHANGE_STRATEGY:
-				computer = computerFactory.makePlayer(chooseStrategy(), "Computer");
+				//copies over info from the current computer and pastes it to the new computer instance
+				Player cpu = computerFactory.changePlayer(chooseStrategy(), gameStatus.getComputer());
+				gameStatus.setComputer(cpu);
 				break;	
 			}
 		}
 		return nextCard;
 
 	}
-	
+	/**
+	 * Opens a scanner and asks for user input for strategy choice
+	 * @return the integer id of the strategy chosen
+	 */
 	private int chooseStrategy()
 	{
 		System.out.println("Choose strategy 1, 2, or 3");
@@ -213,7 +246,7 @@ public class PlayUno {
 		int strategy = in.nextInt();
 		in.nextLine();
 		return strategy;
-		
+
 	}
 
 	/**
@@ -223,11 +256,11 @@ public class PlayUno {
 	public UnoCard playCard(Player currentPlayer)
 	{
 		UnoCard cardPlayed = null;
-
+		DiscardPile discards = gameStatus.getDiscards();
 		//Find the card we want to play
-		if (currentPlayer == computer)
+		if (currentPlayer.equals(gameStatus.getComputer()))
 		{
-			cardPlayed = computer.nextCard(discards);
+			cardPlayed = gameStatus.getComputer().getStrategy().nextCard(discards);
 		}
 		else
 		{
@@ -237,7 +270,9 @@ public class PlayUno {
 		if (cardPlayed != null)
 		{
 			discards.addCard(cardPlayed);
+			//System.out.println("card added!! "+cardPlayed+" check status: "+gameStatus.getDiscards().getTop());
 			currentPlayer.removeCard(cardPlayed);
+			System.out.println(cardPlayed+" was removed from "+currentPlayer.getName()+"'s hand");
 		}
 		else
 		{
@@ -252,8 +287,8 @@ public class PlayUno {
 				cardPlayed = cardDrawn;
 			}
 		}
-
-		System.out.println(currentPlayer);
+		gameStatus.setCurrent(currentPlayer);
+		gameStatus.setDiscards(discards);
 		return cardPlayed;
 
 
@@ -267,13 +302,16 @@ public class PlayUno {
 	 */
 	public void resetDeck()
 	{
+		DiscardPile discards = gameStatus.getDiscards();
+		Deck deck = gameStatus.getDeck();
 		UnoCard topCard = discards.draw();
 		ArrayList<UnoCard> ourDiscards = discards.getDiscards();
 		deck.returnCards(ourDiscards);
 		deck.shuffle();
 		discards = new DiscardPile();
 		discards.addCard(topCard);
-
+		gameStatus.setDeck(deck);
+		gameStatus.setDiscards(discards);
 	}
 
 	/**
@@ -285,13 +323,13 @@ public class PlayUno {
 	 */
 	public Player oppositePlayer(Player currentPlayer)
 	{
-		if (currentPlayer == human)
+		if (currentPlayer.equals(gameStatus.getHuman()))
 		{
-			return computer;
+			return gameStatus.getComputer();
 		}
 		else
 		{
-			return human;
+			return gameStatus.getHuman();
 		}
 	}
 
@@ -301,12 +339,12 @@ public class PlayUno {
 		for (int i = 0; i < numCards; i++)
 		{
 			//Make sure there are still cards in the deck!
-			if (deck.size() == 0)
+			if (gameStatus.getDeck().size() == 0)
 			{
 				System.out.println("Shuffling discards back into the deck");
 				resetDeck();
 			}
-			lastDrawn = currentPlayer.draw(deck, 1);
+			lastDrawn = currentPlayer.draw(gameStatus.getDeck(), 1);
 		}
 		return lastDrawn;
 	}
@@ -315,11 +353,18 @@ public class PlayUno {
 	 */
 	public void playGame()
 	{
+		Player computer = this.computer;
+		Player human = this.human;
+		Player currentPlayer = null;
+		DiscardPile discards = this.discards;
+		Deck deck = this.deck;
+
+
 		Scanner in = new Scanner(System.in);
 		boolean isWinner = false;
 		boolean playerOut = false;
 		System.out.println("Welcome to Uno!");
-		Player currentPlayer;
+
 		boolean handOver;
 
 		Random randomGen = new Random();
@@ -327,6 +372,7 @@ public class PlayUno {
 		if (randomGen.nextInt(2) == 0)
 		{
 			currentPlayer = computer;
+
 		}
 		else
 		{
@@ -353,16 +399,31 @@ public class PlayUno {
 			human.draw(deck, PlayUno.START_CARDS);
 			computer.draw(deck, PlayUno.START_CARDS);
 
-			System.out.println(human);
-			System.out.println(computer);
+			//set up is over so saving it to gameStatus
+			gameStatus.setComputer(computer);
+			gameStatus.setHuman(human);
+			gameStatus.setCurrent(currentPlayer);
+			gameStatus.setDeck(deck);
+			gameStatus.setDiscards(discards);
+
+
 
 			//While we still have cards left to play...
 			while (!playerOut)
 			{
+
+				//make sure to start the round with the saved info from gameStatus
+				computer = gameStatus.getComputer();
+				human = gameStatus.getHuman();
+				discards = gameStatus.getDiscards();
+				deck = gameStatus.getDeck();
+
+						System.out.println("*******************");
 				UnoCard topCard = discards.getTop();
 				System.out.println("Top of discard pile = " + topCard);
 
 				System.out.println("Current player is " + currentPlayer.getName());
+				System.out.println("player hand: "+currentPlayer.getHand());
 				//Start the round - is the top card telling you that you have to do something? Do it!
 
 				//If the top card is Skip or Reverse then we swap players
@@ -382,9 +443,18 @@ public class PlayUno {
 						System.out.println(currentPlayer);
 					}
 				}
-
+				
+				gameStatus.setCurrent(currentPlayer);
 				//Play a card!
 				playCard(currentPlayer);
+
+				//just to update info again
+				computer = gameStatus.getComputer();
+				human = gameStatus.getHuman();
+				currentPlayer = gameStatus.getCurrent();
+				discards = gameStatus.getDiscards();
+				deck = gameStatus.getDeck();
+
 				//If the top card is wild, figure out the color	
 				if (discards.getTop().isWild())
 				{
@@ -415,9 +485,22 @@ public class PlayUno {
 				//If the player is not out, swap the players
 				else
 				{
+					
 					currentPlayer = oppositePlayer(currentPlayer);
+					
 				}
-
+				System.out.println("----------------------");
+				System.out.println("saving status...");
+				//adds the status to history
+				gameStatusHistory.push(new GameStatus(gameStatus));
+				
+				ArrayList<GameStatus> list2 = new ArrayList(gameStatusHistory);
+				for(int i=0; i<list2.size(); i++)
+				{
+					System.out.println(list2.get(i));
+				}
+				
+				System.out.println("----------------------");
 			}
 
 			//Count up the points in the opponent's hand 
@@ -438,6 +521,7 @@ public class PlayUno {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
 		PlayUno unoGame = new PlayUno();
 		unoGame.playGame();
 	}

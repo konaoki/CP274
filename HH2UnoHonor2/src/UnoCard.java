@@ -40,6 +40,11 @@ public class UnoCard implements Comparable {
 		this.id = counter;
 		this.counter += 1;
 	}
+	public UnoCard(UnoCard other)
+	{
+		this.color = other.getColor();
+		this.type = other.getType();
+	}
 
 	public static String getName(int value) {
 		return types[value];

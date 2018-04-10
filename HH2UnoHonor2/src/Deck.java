@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Stack;
 
 /**
  * Defines a deck of Uno cards. Allows decks to be smaller for testing purposes.
@@ -20,7 +21,21 @@ public class Deck {
 		this.deckSize = deckSize;
 		this.initializeDeck();
 	}
+	public Deck(Deck other)
+	{
+		ArrayList<UnoCard> list = new ArrayList();
+		list.addAll(other.getDeck());
+		deck = list;
+		deckSize = other.getDeckSize();
+	}
+	
 
+	public ArrayList<UnoCard> getDeck() {
+		return deck;
+	}
+	public int getDeckSize() {
+		return deckSize;
+	}
 	/**
 	 * Used to get how many cards are in the deck
 	 * @return
